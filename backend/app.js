@@ -6,20 +6,27 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
-
+var bodyParser = require("body-parser");
 var methodOveride = require('method-override');
 
 // definition of indexRouter specifies where it goes (routes/index.js) -> the extension isn't mentioned but it's .js
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var videosRouter = require('./routes/videos'); // videos router will be handled by videos.js file
+var productsRouter = require('./routes/products'); // videos router will be handled by products.js file
+var loginRouter = require('./routes/login');
+var signupRouter = require('./routes/signup');
 
 // we now have a new express app with the name "app"
-const app = express();
+var app = express();
 app.use(cors());
 
 app.use(express.static("public"))
-
+app.use(
+  bodyParser.urlencoded({
+    extended: false
+  })
+);
+app.use(bodyParser.json());
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
 // default view engine we're using here is jade
@@ -37,8 +44,11 @@ app.use(methodOveride('_method'));
 // when user goes to localhost:3000, the request will be handled by indexRouter --> routes/index.js
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-// to access the videos collection
-app.use('/getAllCars', productsRouter);
+// to access the cars collection
+app.use('/products', productsRouter);
+app.use('/login', loginRouter);
+app.use('/signup',signupRouter);
+//app.set('view engine', 'html');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -53,7 +63,22 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send('error');
 });
+
+/*app.post('/signup',function(req,res){
+  collectionUsers.insert({
+    name: req.body.name ,
+    email : req.body.email, 
+    phone : req.body.phone,
+    address : req.body.address ,
+    dob : req.body.dob,
+    password : req.body.password 
+  },function(err,user){
+    if(err) throw err;
+    res.json(user);
+  });
+});*/
+
 
 module.exports = app;
