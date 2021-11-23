@@ -11,35 +11,18 @@ var collectionUsers = db.get('users')
 
 // in get, we can't send any body, so we use post
 // we're currently in /signup only, so we put / only (not "/signup")
-router.post('/', function(req, res) {
-	collectionUsers.insert({
-
-		name: req.body.name,
-		email: req.body.email,
-		phone: req.body.phone,
-		address: req.body.address,
-		dob: req.body.dob,
-		password: req.body.password
-		
-	}), function(err, user){
-	  if (err) throw err;
-	  if(user){
-		  if(req.body.password == user.password){
-			//   res.json(user)
-			res.send({message:"login success", user:user})
-			console.log("working")
-		  }
-		  else{
-			  res.send({message: "wrong credentials"})
-			  console.log("wrong")
-		  }
-	  }
-	  else{
-		  res.send({message: "not registered"})
-		  console.log("noooo")
-	  }
-	//   res.json(user)
-	}); 
-});
+router.post('/',function(req,res){
+    collectionUsers.insert({
+      name: req.body.name ,
+      email : req.body.email, 
+      phone : req.body.phone,
+      address : req.body.address ,
+      dob : req.body.dob,
+      password : req.body.password 
+    },function(err,user){
+      if(err) throw err;
+      res.json(user);
+    });
+  });
 
 module.exports = router;

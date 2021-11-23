@@ -40,7 +40,7 @@ app.use(methodOveride('_method'));
 // when user goes to localhost:3000, the request will be handled by indexRouter --> routes/index.js
 app.use('/products', productsRouter);
 app.use('/login', loginRouter);
-
+app.use('/signup', signupRouter);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
