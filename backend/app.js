@@ -5,6 +5,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var cors = require('cors');
 
 var methodOveride = require('method-override');
 
@@ -14,13 +15,16 @@ var usersRouter = require('./routes/users');
 var videosRouter = require('./routes/videos'); // videos router will be handled by videos.js file
 
 // we now have a new express app with the name "app"
-var app = express();
+const app = express();
+app.use(cors());
+
+app.use(express.static("public"))
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+// app.set('views', path.join(__dirname, 'views'));
 // default view engine we're using here is jade
 // app.set('view engine', 'jade');
-app.set('view engine', 'ejs');
+// app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -34,7 +38,7 @@ app.use(methodOveride('_method'));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 // to access the videos collection
-app.use('/api/videos', videosRouter);
+app.use('/getAllCars', productsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

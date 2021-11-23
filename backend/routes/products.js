@@ -4,22 +4,19 @@ var router = express.Router();
 var monk = require('monk'); // this require returns a method in var monk
 
 // the returned method is used to connect to the db, the method returns a db object
-var db = monk('localhost:27017/vidzy');
+var db = monk('localhost:27017/xlr8');
 
 // use the db object to access a collection
-var collection = db.get('videos')
+var collectionProd = db.get('products')
 
 // CRUD Read -> display all documents in collection
-// we've defined the base path as api/videos so when user goes to that url, the videos collection will be displayed
+// we've defined the base path as /getAllCars so when user goes to that url, the videos collection will be displayed
 router.get('/', function(req, res) {
-  // returning a json object
-  // find method -> 1st param - {} if empty means no criteria for finding object i.e. all docs will be returned
-  // 2nd param -> callback function with 2 params - one is always err, and second is an array of objs that will be displayed (name can be anything)
-  collection.find({}, function(err, videos){
+  
+  collectionProd.find({}, function(err, products){
     if (err) throw err;
-    res.json(videos);
+    res.json(products);
   }); 
-
   // res.render('index', { title: 'Express' });
 });
 

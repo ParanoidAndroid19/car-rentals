@@ -3,12 +3,11 @@ var express = require('express');
 // http operations (get, put, etc) of this api
 var router = express.Router();
 
-
 var monk = require('monk'); 
 var db = monk('localhost:27017/xlr8');
 var collectionProd = db.get('products')
-var collectionUsers = db.get('users')
-var collectionBookings = db.get('booking')
+// var collectionUsers = db.get('users')
+// var collectionBookings = db.get('booking')
 
 /* GET home page. */
 router.get('/', function(req, res) {
