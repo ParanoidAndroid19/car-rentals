@@ -1,0 +1,65 @@
+<!--
+Soha Parasnis
+Net ID - sxp200044
+-->
+<%- include ('partials/header') %>
+
+<div class="jumbotron">
+	<h1 class="display-4">Vidzy Application</h1>
+	<p class="lead">This is the list of most popular videos</p>
+	<a class="btn btn-primary btn-lg" href="/videos/new" role="button">
+	Add new video</a>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-6 col-md-4">
+			<!-- <div style="margin: 5%; width: 20%"> -->
+				<form action="/searchVideos" method="POST">
+					<div class="form-group">
+						<input type="text" name="title" class="form-control" placeholder="title">
+					</div>
+					<div class="form-group">
+						<input type="text" name="genre" class="form-control" placeholder="genre">
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-info" >Search</button>
+					</div>
+				</form>
+				<!-- <a href="/">Cancel</a> -->
+			<!-- </div> -->
+		</div>
+		<div class="col-6 col-md-4"></div>
+		<div class="col-6 col-md-4"></div>
+		<!-- <div class="col-6 col-md-4"></div> -->
+		<!-- <div class="col-6 col-md-4">
+			<form action="/filterVideo" method="GET">
+				<div class="form-group">
+					<input type="text" name="title" class="form-control" placeholder="genre">
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-info" >Filter using Genre</button>
+				</div>
+			</form>
+
+		</div> -->
+	</div>
+</div>
+
+
+<div class="container">
+
+	<div class="row">
+
+	<% results.forEach(function(video){ %>
+		<div class="sm-col-3">
+			<img src="images/<%= video.image %>" style="width:200px; height:200px;" class="img-thumbnail"/>
+			<div class="caption"><a href="videos/<%= video._id %>"><%= video.title %></a></div>
+		</div>
+	<% }); %>
+
+	</div>
+</div>
+
+<%- include ('partials/footer') %>
+
