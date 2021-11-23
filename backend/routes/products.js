@@ -18,7 +18,6 @@ router.get('/', function(req, res) {
   }); 
 });
 
-
 // ---> PREVIOUS PROJECT
 // CRUD Read -> retrieve details of a particular video document 
 // api/videos/id

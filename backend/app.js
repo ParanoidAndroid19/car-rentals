@@ -14,8 +14,11 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var productsRouter = require('./routes/products'); 
+// var loginRouter = require('./routes/login'); 
 var loginRouter = require('./routes/login'); 
+// var signupRouter = require('./routes/signup');
 var signupRouter = require('./routes/signup');
+var adminRouter = require('./router/admin');
 
 // we now have a new express app with the name "app"
 const app = express();
@@ -40,11 +43,14 @@ app.use(methodOveride('_method'));
 // when user goes to localhost:3000, the request will be handled by indexRouter --> routes/index.js
 app.use('/products', productsRouter);
 app.use('/login', loginRouter);
+// app.use('/loginHashed', loginRouter);
 app.use('/signup', signupRouter);
+// app.use('/signupHashed', signupRouter);
+app.use('/admin', adminRouter);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-// to access the videos collection
+
 
 
 // catch 404 and forward to error handler
