@@ -4,30 +4,12 @@ var monk = require('monk'); // this require returns a method in var monk
 
 // the returned method is used to connect to the db, the method returns a db object
 var db = monk('localhost:27017/xlr8');
-var collectionUsers = db.get('users');
-/* GET users listing. */
-/*router.post("/",(req,res)=>{
-    //const {email,password} =req.body;
-    collectionUsers.findone({email:req.body.email},(err,user)=>{
-        if(user){
-           if(req.body.password === user.password){
-               res.send({message:"login sucess",user:user})
-           }else{
-               res.send({message:"wrong credentials"})
-           }
-        }else{
-            res.send("not register")
-        }
-    })
-});*/
-router.get('/', function(req, res) {
-  
-    collectionUsers.find({}, function(err, users){
-      if (err) throw err;
-      res.json(users);
-    }); 
-    // res.render('index', { title: 'Express' });
-  });
+
+// use the db object to access a collection
+var collectionUsers = db.get('users')
+
+// in get, we can't send any body, so we use post
+// we're currently in /signup only, so we put / only (not "/signup")
 router.post('/',function(req,res){
     collectionUsers.insert({
       name: req.body.name ,
@@ -41,6 +23,5 @@ router.post('/',function(req,res){
       res.json(user);
     });
   });
-
 
 module.exports = router;

@@ -15,6 +15,7 @@ var usersRouter = require('./routes/users');
 var productsRouter = require('./routes/products'); // videos router will be handled by products.js file
 var loginRouter = require('./routes/login');
 var signupRouter = require('./routes/signup');
+var bookingRouter = require('./routes/booking');
 
 // we now have a new express app with the name "app"
 var app = express();
@@ -48,6 +49,7 @@ app.use('/users', usersRouter);
 app.use('/products', productsRouter);
 app.use('/login', loginRouter);
 app.use('/signup',signupRouter);
+app.use('/booking',bookingRouter);
 //app.set('view engine', 'html');
 
 // catch 404 and forward to error handler
