@@ -12,10 +12,13 @@ var methodOveride = require('method-override');
 // definition of indexRouter specifies where it goes (routes/index.js) -> the extension isn't mentioned but it's .js
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var productsRouter = require('./routes/products'); // videos router will be handled by products.js file
+
+
+var productsRouter = require('./routes/products'); 
 var loginRouter = require('./routes/login');
 var signupRouter = require('./routes/signup');
 var bookingRouter = require('./routes/booking');
+var adminRouter = require('./routes/admin');
 
 // we now have a new express app with the name "app"
 var app = express();
@@ -45,11 +48,13 @@ app.use(methodOveride('_method'));
 // when user goes to localhost:3000, the request will be handled by indexRouter --> routes/index.js
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
 // to access the cars collection
 app.use('/products', productsRouter);
 app.use('/login', loginRouter);
 app.use('/signup',signupRouter);
 app.use('/booking',bookingRouter);
+app.use('/admin', adminRouter);
 //app.set('view engine', 'html');
 
 // catch 404 and forward to error handler
