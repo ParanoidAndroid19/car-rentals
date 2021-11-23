@@ -10,16 +10,16 @@ var db = monk('localhost:27017/xlr8');
 var collectionProd = db.get('products')
 
 // CRUD Read -> display all documents in collection
-// we've defined the base path as /getAllCars so when user goes to that url, the videos collection will be displayed
+// we've defined the base path as /products so when user goes to that url, the products collection will be displayed
 router.get('/', function(req, res) {
-  
   collectionProd.find({}, function(err, products){
     if (err) throw err;
     res.json(products);
   }); 
-  // res.render('index', { title: 'Express' });
 });
 
+
+// ---> PREVIOUS PROJECT
 // CRUD Read -> retrieve details of a particular video document 
 // api/videos/id
 // why do we write /:id instead of /id below? -> in express, to be able to retrieve id value from url

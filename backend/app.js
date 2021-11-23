@@ -12,7 +12,10 @@ var methodOveride = require('method-override');
 // definition of indexRouter specifies where it goes (routes/index.js) -> the extension isn't mentioned but it's .js
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var videosRouter = require('./routes/videos'); // videos router will be handled by videos.js file
+
+var productsRouter = require('./routes/products'); 
+var loginRouter = require('./routes/login'); 
+var signupRouter = require('./routes/signup');
 
 // we now have a new express app with the name "app"
 const app = express();
@@ -26,8 +29,8 @@ app.use(express.static("public"))
 // app.set('view engine', 'jade');
 // app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
 app.use(express.json());
+app.use(logger('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,10 +38,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOveride('_method'));
 
 // when user goes to localhost:3000, the request will be handled by indexRouter --> routes/index.js
+app.use('/products', productsRouter);
+app.use('/login', loginRouter);
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 // to access the videos collection
-app.use('/getAllCars', productsRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -53,7 +60,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send('error');
 });
 
 module.exports = app;
