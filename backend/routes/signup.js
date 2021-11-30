@@ -37,28 +37,61 @@ var collectionUsers = db.get('users')
 
 // WORKING!!! - aynsc - recommended!!
 router.post('/',function(req,res){
-	// hashing password
-	var p = req.body.password;
-	const saltRounds = 10;
-	// const salt = bcrypt.genSaltSync(saltRounds);
-	// const hash = bcrypt.hashSync(p, salt);
-	bcrypt.hash(p, saltRounds, function(err, hash) {
-		// Store hash in your password DB.
-		// saving it to db
-		collectionUsers.insert({
-			name: req.body.name ,
-			email : req.body.email, 
-			phone : req.body.phone,
-			address : req.body.address ,
-			dob : req.body.dob,
-			password : hash,
-		  },function(err,user){
-			if(err) throw err;
-			res.json(user);
-		  });
+
+	collectionUsers.findOne({ email: req.body.email }, function(err, user){
+		if (err) throw err;
+		if (user){
+			res.send("User is already registered!");
+		}
+		else{
+			// hashing password
+			var p = req.body.password;
+			const saltRounds = 10;
+			// const salt = bcrypt.genSaltSync(saltRounds);
+			// const hash = bcrypt.hashSync(p, salt);
+			bcrypt.hash(p, saltRounds, function(err, hash) {
+				// Store hash in your password DB.
+				// saving it to db
+				collectionUsers.insert({
+					name: req.body.name ,
+					email : req.body.email, 
+					phone : req.body.phone,
+					address : req.body.address ,
+					dob : req.body.dob,
+					password : hash,
+				},function(err,user){
+					if(err) throw err;
+					res.json(user);
+				});
+			});
+		}
 	});
-	
 });
+
+// // WORKING!!! - aynsc - recommended!!
+// router.post('/',function(req,res){
+// 	// hashing password
+// 	var p = req.body.password;
+// 	const saltRounds = 10;
+// 	// const salt = bcrypt.genSaltSync(saltRounds);
+// 	// const hash = bcrypt.hashSync(p, salt);
+// 	bcrypt.hash(p, saltRounds, function(err, hash) {
+// 		// Store hash in your password DB.
+// 		// saving it to db
+// 		collectionUsers.insert({
+// 			name: req.body.name ,
+// 			email : req.body.email, 
+// 			phone : req.body.phone,
+// 			address : req.body.address ,
+// 			dob : req.body.dob,
+// 			password : hash,
+// 		  },function(err,user){
+// 			if(err) throw err;
+// 			res.json(user);
+// 		  });
+// 	});
+	
+// });
 
 // WORKING! - sync - not recommended!!
 // router.post('/',function(req,res){

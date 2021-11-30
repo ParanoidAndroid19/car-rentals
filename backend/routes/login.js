@@ -22,19 +22,20 @@ router.post('/', function(req, res) {
 		bcrypt.compare(enteredPassword, storedPassword, function(err, result) {
 			// result == true
 			if(result){
-				//   res.json(user)
-				res.send({message:"login success", user:user})
-				console.log("working")
+				res.json(user)
+				// res.send({message:"login success", user:user})
+				// console.log("working")
 			  }
 			  else{
+				  // render same page? 
 				  res.send({message: "wrong credentials"})
-				  console.log("wrong")
+				//   console.log("wrong")
 			  }
 		}); 	  
 	  }
 	  else{
 		res.send({message: "not registered"})
-		console.log("noooo")
+		// console.log("noooo")
 	  }
 	//   res.json(user)
 	}); 

@@ -73,6 +73,4 @@ router.delete('/delete', function(req, res){
 	});
 });
 
-
-
 module.exports = router;
