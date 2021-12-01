@@ -5,7 +5,37 @@ import Button from "@mui/material/Button";
 
 export default function Login() {
   // const classes = useStyles();
-  // let history = useHistory();
+  let history = useHistory();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  function handleLogin() {
+    fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data._id) {
+          localStorage.setItem("user", JSON.stringify({ uid: data._id }));
+          history.push("/");
+          window.location.reload();
+        }
+        else {
+          alert("Please enter correct login details")
+        }
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <div style={{ textAlign: "center", marginTop: "40px" }}>
@@ -16,12 +46,21 @@ export default function Login() {
           label="Email"
           variant="outlined"
           style={{ marginBottom: "20px" }}
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
         />
-        <TextField label="Password" type="password" variant="outlined" />
+        <TextField
+          label="Password"
+          type="password"
+          variant="outlined"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+        />
 
         <Button
           variant="contained"
           style={{ fontWeight: "bold", marginTop: "20px" }}
+          onClick={handleLogin}
         >
           Login
         </Button>

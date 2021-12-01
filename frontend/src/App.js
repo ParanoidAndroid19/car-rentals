@@ -50,49 +50,53 @@ function App() {
                 Car Rentals
               </Link>
             </Typography>
-            <Button
-              color="secondary"
-              variant="contained"
-              style={{ backgroundColor: "white", marginRight: "20px" }}
-            >
-              <Link
-                to="/signup"
-                style={{
-                  textDecoration: "None",
-                  color: "black",
-                  fontWeight: "bold",
-                }}
-              >
-                Signup
-              </Link>
-            </Button>
-            <Button
-              color="secondary"
-              variant="contained"
-              style={{ backgroundColor: "white", marginRight: "20px" }}
-            >
-              <Link
-                to="/login"
-                style={{
-                  textDecoration: "None",
-                  color: "black",
-                  fontWeight: "bold",
-                }}
-              >
-                Login
-              </Link>
-            </Button>
-
-            <IconButton>
-              <Link
-                to="/cart"
-                style={{
-                  color: "white",
-                }}
-              >
-                <ShoppingCartIcon />
-              </Link>
-            </IconButton>
+            {localStorage.getItem("user") ? (
+              <IconButton>
+                <Link
+                  to="/cart"
+                  style={{
+                    color: "white",
+                  }}
+                >
+                  <ShoppingCartIcon />
+                </Link>
+              </IconButton>
+            ) : (
+              <>
+                <Button
+                  color="secondary"
+                  variant="contained"
+                  style={{ backgroundColor: "white", marginRight: "20px" }}
+                >
+                  <Link
+                    to="/signup"
+                    style={{
+                      textDecoration: "None",
+                      color: "black",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Signup
+                  </Link>
+                </Button>
+                <Button
+                  color="secondary"
+                  variant="contained"
+                  style={{ backgroundColor: "white", marginRight: "20px" }}
+                >
+                  <Link
+                    to="/login"
+                    style={{
+                      textDecoration: "None",
+                      color: "black",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Login
+                  </Link>
+                </Button>
+              </>
+            )}
           </Toolbar>
         </AppBar>
         <Route path={`/signup`} exact component={Signup} />
