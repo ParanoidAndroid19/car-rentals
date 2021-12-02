@@ -19,24 +19,60 @@ router.get('/', function(req, res) {
   });
 
   router.post('/',function(req,res){
-    //collectionProd.find({ _id: req.body.id},function(err,cost){
-      //  if (err) throw err;
-        res.json(req.body.cost);
-    //}),
+    
+    
+
+      var costcost = parseInt(req.body.cost); 
+      var startDate = new Date(req.body.from_date);
+      var endDate = new Date(req.body.to_date);
+      const days = Math.abs(endDate.getDate() - startDate.getDate());
+      const price = (days * costcost);
+
+    
     collectionBook.insert({
       customer_id: req.body.customer_id,
       product_id : req.body.product_id, 
-      from_date : req.body.from_date,
-      to_date : req.body.to_date ,
+      from_date : startDate.toString(),
+      to_date : endDate.toString() ,
       pickup_location : req.body.pickup_location,
       dropoff_location : req.body.dropoff_location,
-      total_cost : req.body.cost
+      total_cost : price.toString()
     },function(err,user){
       if(err) throw err;
       res.json(user);
     });
   });
 
+ /* router.put('/:id', (req, res) => {
+    var costcost = parseInt(req.body.cost); 
+      var startDate = new Date(req.body.from_date);
+      var endDate = new Date(req.body.to_date);
+      const days = Math.abs(endDate.getDate() - startDate.getDate());
+      const price = (days * costcost);
+
+    collectionBook.update({
+      _id: req.params.id, 
+    }, { $set: {
+      from_date: startDate.toString(),
+      to_date: endDate.toString(),
+      pickup_location: req.body.pickup_location,
+      dropoff_location: req.body.dropoff_location,
+      total_cost : price.toString()
+    }})
+    .then(result => {
+      return (result.n === 0) ? res.status(404).send({ error: 'booking does not exist' })
+            : res.redirect('/');
+    })
+    .catch(err => res.send({ error: err.message }));
+    });*/
+
+ router.delete('/:id', function(req, res) {
+	collectionBook.remove({_id:req.body.id }, function(err, bookings){
+		if (err) throw err;
+	  	res.json(bookings);
+	});
+});
+  
 
 //eg customer_id: 619c6095713372da2e4d5eea
 //eg product_id: 619c5b2e713372da2e4d5e70
