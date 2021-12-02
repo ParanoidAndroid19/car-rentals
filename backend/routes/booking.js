@@ -11,7 +11,7 @@ var collectionProd = db.get('products');
 var collectionUsers = db.get('users');
 var collectionBook = db.get('booking');
 
-router.get('/', function(req, res) {
+router.get('/:id', function(req, res) {
     collectionBook.find({customer_id:req.params.id}, function(err, bookings){
       if (err) throw err;
       res.json(bookings);
