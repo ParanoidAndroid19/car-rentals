@@ -52,6 +52,33 @@ export default function Home() {
       .catch((err) => console.log(err));
   }, []);
 
+  function reserveCar(pid) {
+    if (localStorage.getItem("user")) {
+      let userLS = JSON.parse(localStorage.getItem("user"));
+
+      fetch("http://localhost:3000/booking", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify({
+          customer_id: userLS.uid,
+          product_id: pid,
+          from_date: date[0],
+          to_date: date[1],
+          pickup_location: pickUpLoc,
+          dropoff_location: dropOffLoc,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          alert("Booking created successfully!");
+        })
+        .catch((err) => console.log(err));
+    }
+  }
+
   return (
     <div style={{ marginTop: "2%" }}>
       <div
@@ -109,7 +136,7 @@ export default function Home() {
           />
         </LocalizationProvider>
       </div>
-      <div
+      {/* <div
         style={{
           display: "flex",
           justifyContent: "flex-end",
@@ -123,8 +150,8 @@ export default function Home() {
         >
           Search
         </Button>
-      </div>
-      <div style={{ display: "flex" }}>
+      </div> */}
+      <div style={{ display: "flex", marginTop: "35px" }}>
         <div
           style={{
             // backgroundColor: "#F8F5F4",
@@ -140,6 +167,7 @@ export default function Home() {
             value={carFilter}
             onChange={handleCarFilter}
             aria-label="text formatting"
+            style={{minWidth: "59%"}}
           >
             <ToggleButton value="midsize suv">Midsize SUV</ToggleButton>
             <ToggleButton value="luxury">Luxury</ToggleButton>
@@ -164,6 +192,7 @@ export default function Home() {
             value={priceFilter}
             onChange={handlePriceFilter}
             aria-label="text formatting"
+            style={{minWidth: "59%"}}
           >
             <ToggleButton value={75}>Less than $75</ToggleButton>
             <ToggleButton value={200}>$75 to $200</ToggleButton>
@@ -220,6 +249,7 @@ export default function Home() {
                         size="small"
                         variant="contained"
                         style={{ fontWeight: "bold" }}
+                        onClick={() => reserveCar(car._id)}
                       >
                         Reserve
                       </Button>
