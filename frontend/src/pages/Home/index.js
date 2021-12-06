@@ -18,6 +18,7 @@ import TextField from "@mui/material/TextField";
 import TimePicker from "@mui/lab/TimePicker";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 
 export default function Home() {
   // const classes = useStyles();
@@ -39,6 +40,8 @@ export default function Home() {
   const [carCost, setCarCost] = useState("");
   const [carSpec, setCarSpec] = useState("");
   const [carImg, setCarImg] = useState("");
+
+  const [editCar, setEditCar] = useState(null);
 
   var userLS = null;
 
@@ -115,6 +118,7 @@ export default function Home() {
         cost: carCost,
         specification: carSpec,
         image: carImg,
+        deleted: "0",
       }),
     })
       .then((response) => response.json())
@@ -122,6 +126,13 @@ export default function Home() {
         console.log(data);
         alert("Car added successfully!");
         getAllCars();
+        setCarType("");
+        setCarModel("");
+        setCapacity("");
+        setRating("");
+        setCarCost("");
+        setCarSpec("");
+        setCarImg("");
       })
       .catch((err) => console.log(err));
   }
@@ -141,6 +152,41 @@ export default function Home() {
         console.log(data);
         alert("Car deleted successfully!");
         getAllCars();
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function modifyCar() {
+    fetch("http://localhost:3000/admin/update", {
+      method: "PUT",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({
+        id: editCar,
+        car_type: carType,
+        car_model: carModel,
+        capacity: capacity,
+        rating: rating,
+        cost: carCost,
+        specification: carSpec,
+        image: carImg,
+        deleted: "0",
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        alert("Car edited successfully!");
+        getAllCars();
+        setCarType("");
+        setCarModel("");
+        setCapacity("");
+        setRating("");
+        setCarCost("");
+        setCarSpec("");
+        setCarImg("");
+        setEditCar(null);
       })
       .catch((err) => console.log(err));
   }
@@ -349,7 +395,12 @@ export default function Home() {
                       height="200px"
                       width="auto"
                     />
-                    <CardContent>
+                    <CardContent
+                      style={{
+                        textDecoration:
+                          car.deleted !== "0" ? "line-through" : "none",
+                      }}
+                    >
                       <div>
                         <h3 style={{ margin: 0 }}>{car.car_type}</h3>
                         <p style={{ margin: 0, marginBottom: "10px" }}>
@@ -367,19 +418,44 @@ export default function Home() {
                       </div>
                     </CardContent>
 
-                    <div style={{ padding: "16px" }}>
+                    <div
+                      style={{
+                        padding: "16px",
+                        textDecoration:
+                          car.deleted !== "0" ? "line-through" : "none",
+                      }}
+                    >
                       <h3 style={{ margin: "5px", textAlign: "end" }}>
                         ${car.cost}
                       </h3>
                       <p style={{ margin: "5px", textAlign: "end" }}>per day</p>
                       {localStorage.getItem("user") ? (
                         userLS.admin ? (
-                          <IconButton
-                            style={{ marginTop: "100%", marginLeft: "48%" }}
-                            onClick={() => deleteCar(car._id)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
+                          <div style={{ display: "flex", marginTop: "100%" }}>
+                            <IconButton
+                              onClick={() => {
+                                setEditCar(car._id);
+
+                                setCarType(car.car_type);
+                                setCarModel(car.car_model);
+                                setCapacity(car.capacity);
+                                // setRating("");
+                                setCarCost(car.cost);
+                                setCarSpec(car.specification);
+                                setCarImg(car.image);
+                              }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              style={{
+                                display: car.deleted !== "0" ? "none" : "flex",
+                              }}
+                              onClick={() => deleteCar(car._id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </div>
                         ) : (
                           <Button
                             size="small"
@@ -461,14 +537,25 @@ export default function Home() {
                 style={{ marginBottom: "15px" }}
               />
               <div>
-                <Button
-                  size="small"
-                  variant="contained"
-                  style={{ fontWeight: "bold" }}
-                  onClick={() => addNewCar()}
-                >
-                  Add a new car
-                </Button>
+                {editCar ? (
+                  <Button
+                    size="small"
+                    variant="contained"
+                    style={{ fontWeight: "bold" }}
+                    onClick={() => modifyCar()}
+                  >
+                    Update car
+                  </Button>
+                ) : (
+                  <Button
+                    size="small"
+                    variant="contained"
+                    style={{ fontWeight: "bold" }}
+                    onClick={() => addNewCar()}
+                  >
+                    Add a new car
+                  </Button>
+                )}
               </div>
             </div>
           ) : null
