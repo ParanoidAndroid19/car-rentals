@@ -74,3 +74,5 @@ router.delete('/delete', function(req, res){
 });
 
 module.exports = router;
+//eg id: 61ae51e505e7675c400f1230
+//eg product id: 61ae51e505e7675c400f1230
