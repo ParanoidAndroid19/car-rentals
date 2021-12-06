@@ -16,6 +16,8 @@ import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import TimePicker from "@mui/lab/TimePicker";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { IconButton } from "@mui/material";
 
 export default function Home() {
   // const classes = useStyles();
@@ -30,6 +32,20 @@ export default function Home() {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
 
+  const [carType, setCarType] = useState("");
+  const [carModel, setCarModel] = useState("");
+  const [capacity, setCapacity] = useState("");
+  const [rating, setRating] = useState("");
+  const [carCost, setCarCost] = useState("");
+  const [carSpec, setCarSpec] = useState("");
+  const [carImg, setCarImg] = useState("");
+
+  var userLS = null;
+
+  if (localStorage.getItem("user")) {
+    userLS = JSON.parse(localStorage.getItem("user"));
+  }
+
   const handleCarFilter = (event, newCars) => {
     setCarFilter(newCars);
   };
@@ -42,7 +58,7 @@ export default function Home() {
     setPriceFilter(newPrice);
   };
 
-  useEffect(() => {
+  function getAllCars() {
     fetch("http://localhost:3000/products")
       .then((response) => response.json())
       .then((data) => {
@@ -50,6 +66,10 @@ export default function Home() {
         console.log(data);
       })
       .catch((err) => console.log(err));
+  }
+
+  useEffect(() => {
+    getAllCars();
   }, []);
 
   function reserveCar(pid) {
@@ -76,66 +96,172 @@ export default function Home() {
           alert("Booking created successfully!");
         })
         .catch((err) => console.log(err));
+    } else {
+      alert("Please login first to make a reserve");
     }
+  }
+
+  function addNewCar() {
+    fetch("http://localhost:3000/admin/add", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({
+        car_type: carType,
+        car_model: carModel,
+        capacity: capacity,
+        rating: rating,
+        cost: carCost,
+        specification: carSpec,
+        image: carImg,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        alert("Car added successfully!");
+        getAllCars();
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function deleteCar(pid) {
+    fetch("http://localhost:3000/admin/delete", {
+      method: "DELETE",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({
+        id: pid,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        alert("Car deleted successfully!");
+        getAllCars();
+      })
+      .catch((err) => console.log(err));
   }
 
   return (
     <div style={{ marginTop: "2%" }}>
-      <div
-        style={{
-          marginLeft: "30px",
-          marginRight: "30px",
-          display: "flex",
-          justifyContent: "space-evenly",
-        }}
-      >
-        <TextField
-          label="Pick-up location"
-          variant="outlined"
-          value={pickUpLoc}
-          onChange={(event) => setPickUpLoc(event.target.value)}
-        />
-        <TextField
-          label="Drop-off location"
-          variant="outlined"
-          value={dropOffLoc}
-          onChange={(event) => setDropOffLoc(event.target.value)}
-        />
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DateRangePicker
-            startText="Pick-up date"
-            endText="Drop-off date"
-            value={date}
-            onChange={(newValue) => {
-              setDate(newValue);
-              console.log(date);
+      {localStorage.getItem("user") ? (
+        userLS.admin ? null : (
+          <div
+            style={{
+              marginLeft: "30px",
+              marginRight: "30px",
+              display: "flex",
+              justifyContent: "space-evenly",
             }}
-            renderInput={(startProps, endProps) => (
-              <React.Fragment>
-                <TextField {...startProps} />
-                <Box sx={{ mx: 2 }}> to </Box>
-                <TextField {...endProps} />
-              </React.Fragment>
-            )}
+          >
+            <TextField
+              label="Pick-up location"
+              variant="outlined"
+              value={pickUpLoc}
+              onChange={(event) => setPickUpLoc(event.target.value)}
+            />
+            <TextField
+              label="Drop-off location"
+              variant="outlined"
+              value={dropOffLoc}
+              onChange={(event) => setDropOffLoc(event.target.value)}
+            />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DateRangePicker
+                startText="Pick-up date"
+                endText="Drop-off date"
+                value={date}
+                onChange={(newValue) => {
+                  setDate(newValue);
+                  console.log(date);
+                }}
+                renderInput={(startProps, endProps) => (
+                  <React.Fragment>
+                    <TextField {...startProps} />
+                    <Box sx={{ mx: 2 }}> to </Box>
+                    <TextField {...endProps} />
+                  </React.Fragment>
+                )}
+              />
+              <TimePicker
+                label="Pick-up time"
+                value={startTime}
+                onChange={(newValue) => {
+                  setStartTime(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+              <TimePicker
+                label="Drop-off time"
+                value={endTime}
+                onChange={(newValue) => {
+                  setEndTime(newValue);
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </div>
+        )
+      ) : (
+        <div
+          style={{
+            marginLeft: "30px",
+            marginRight: "30px",
+            display: "flex",
+            justifyContent: "space-evenly",
+          }}
+        >
+          <TextField
+            label="Pick-up location"
+            variant="outlined"
+            value={pickUpLoc}
+            onChange={(event) => setPickUpLoc(event.target.value)}
           />
-          <TimePicker
-            label="Pick-up time"
-            value={startTime}
-            onChange={(newValue) => {
-              setStartTime(newValue);
-            }}
-            renderInput={(params) => <TextField {...params} />}
+          <TextField
+            label="Drop-off location"
+            variant="outlined"
+            value={dropOffLoc}
+            onChange={(event) => setDropOffLoc(event.target.value)}
           />
-          <TimePicker
-            label="Drop-off time"
-            value={endTime}
-            onChange={(newValue) => {
-              setEndTime(newValue);
-            }}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
-      </div>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DateRangePicker
+              startText="Pick-up date"
+              endText="Drop-off date"
+              value={date}
+              onChange={(newValue) => {
+                setDate(newValue);
+                console.log(date);
+              }}
+              renderInput={(startProps, endProps) => (
+                <React.Fragment>
+                  <TextField {...startProps} />
+                  <Box sx={{ mx: 2 }}> to </Box>
+                  <TextField {...endProps} />
+                </React.Fragment>
+              )}
+            />
+            <TimePicker
+              label="Pick-up time"
+              value={startTime}
+              onChange={(newValue) => {
+                setStartTime(newValue);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+            <TimePicker
+              label="Drop-off time"
+              value={endTime}
+              onChange={(newValue) => {
+                setEndTime(newValue);
+              }}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+        </div>
+      )}
       {/* <div
         style={{
           display: "flex",
@@ -167,7 +293,7 @@ export default function Home() {
             value={carFilter}
             onChange={handleCarFilter}
             aria-label="text formatting"
-            style={{minWidth: "59%"}}
+            style={{ minWidth: "59%" }}
           >
             <ToggleButton value="midsize suv">Midsize SUV</ToggleButton>
             <ToggleButton value="luxury">Luxury</ToggleButton>
@@ -192,7 +318,7 @@ export default function Home() {
             value={priceFilter}
             onChange={handlePriceFilter}
             aria-label="text formatting"
-            style={{minWidth: "59%"}}
+            style={{ minWidth: "59%" }}
           >
             <ToggleButton value={75}>Less than $75</ToggleButton>
             <ToggleButton value={200}>$75 to $200</ToggleButton>
@@ -209,6 +335,7 @@ export default function Home() {
                       width: "fit-content",
                       marginBottom: "10px",
                     }}
+                    key={car._id}
                   >
                     {/* <CardMedia
                   component="img"
@@ -245,20 +372,107 @@ export default function Home() {
                         ${car.cost}
                       </h3>
                       <p style={{ margin: "5px", textAlign: "end" }}>per day</p>
-                      <Button
-                        size="small"
-                        variant="contained"
-                        style={{ fontWeight: "bold" }}
-                        onClick={() => reserveCar(car._id)}
-                      >
-                        Reserve
-                      </Button>
+                      {localStorage.getItem("user") ? (
+                        userLS.admin ? (
+                          <IconButton
+                            style={{ marginTop: "100%", marginLeft: "48%" }}
+                            onClick={() => deleteCar(car._id)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        ) : (
+                          <Button
+                            size="small"
+                            variant="contained"
+                            style={{ fontWeight: "bold" }}
+                            onClick={() => reserveCar(car._id)}
+                          >
+                            Reserve
+                          </Button>
+                        )
+                      ) : (
+                        <Button
+                          size="small"
+                          variant="contained"
+                          style={{ fontWeight: "bold" }}
+                          onClick={() => reserveCar(car._id)}
+                        >
+                          Reserve
+                        </Button>
+                      )}
                     </div>
                   </Card>
                 );
               })
             : null}
         </div>
+        {localStorage.getItem("user") ? (
+          userLS.admin ? (
+            <div
+              style={{ width: "22%", textAlign: "end", marginRight: "42px" }}
+            >
+              <TextField
+                label="Car type"
+                variant="outlined"
+                value={carType}
+                onChange={(event) => setCarType(event.target.value)}
+                style={{ marginBottom: "15px" }}
+              />
+              <TextField
+                label="Car model"
+                variant="outlined"
+                value={carModel}
+                onChange={(event) => setCarModel(event.target.value)}
+                style={{ marginBottom: "15px" }}
+              />
+              <TextField
+                label="Capacity"
+                variant="outlined"
+                value={capacity}
+                onChange={(event) => setCapacity(event.target.value)}
+                style={{ marginBottom: "15px" }}
+              />
+              <TextField
+                label="Rating"
+                variant="outlined"
+                value={rating}
+                onChange={(event) => setRating(event.target.value)}
+                style={{ marginBottom: "15px" }}
+              />
+              <TextField
+                label="Cost"
+                variant="outlined"
+                value={carCost}
+                onChange={(event) => setCarCost(event.target.value)}
+                style={{ marginBottom: "15px" }}
+              />
+              <TextField
+                label="Specification"
+                variant="outlined"
+                value={carSpec}
+                onChange={(event) => setCarSpec(event.target.value)}
+                style={{ marginBottom: "15px" }}
+              />
+              <TextField
+                label="Image"
+                variant="outlined"
+                value={carImg}
+                onChange={(event) => setCarImg(event.target.value)}
+                style={{ marginBottom: "15px" }}
+              />
+              <div>
+                <Button
+                  size="small"
+                  variant="contained"
+                  style={{ fontWeight: "bold" }}
+                  onClick={() => addNewCar()}
+                >
+                  Add a new car
+                </Button>
+              </div>
+            </div>
+          ) : null
+        ) : null}
       </div>
     </div>
   );

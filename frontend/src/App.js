@@ -51,16 +51,34 @@ function App() {
               </Link>
             </Typography>
             {localStorage.getItem("user") ? (
-              <IconButton>
-                <Link
-                  to="/cart"
+              <>
+                <IconButton style={{ paddingTop: "20px", marginRight: "20px" }}>
+                  <Link
+                    to="/cart"
+                    style={{
+                      color: "white",
+                    }}
+                  >
+                    <ShoppingCartIcon />
+                  </Link>
+                </IconButton>
+                <Button
+                  color="secondary"
+                  variant="contained"
                   style={{
-                    color: "white",
+                    backgroundColor: "white",
+                    marginRight: "20px",
+                    color: "black",
+                    fontWeight: "bold",
+                  }}
+                  onClick={() => {
+                    localStorage.removeItem("user");
+                    window.location.reload();
                   }}
                 >
-                  <ShoppingCartIcon />
-                </Link>
-              </IconButton>
+                  Logout
+                </Button>
+              </>
             ) : (
               <>
                 <Button

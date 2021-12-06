@@ -23,12 +23,21 @@ export default function Login() {
       .then((res) => res.json())
       .then((data) => {
         if (data._id) {
-          localStorage.setItem("user", JSON.stringify({ uid: data._id }));
+          if (password === "admin123test") {
+            localStorage.setItem(
+              "user",
+              JSON.stringify({ uid: data._id, admin: true })
+            );
+          } else {
+            localStorage.setItem(
+              "user",
+              JSON.stringify({ uid: data._id, admin: false })
+            );
+          }
           history.push("/");
           window.location.reload();
-        }
-        else {
-          alert("Please enter correct login details")
+        } else {
+          alert("Please enter correct login details");
         }
         console.log(data);
       })
