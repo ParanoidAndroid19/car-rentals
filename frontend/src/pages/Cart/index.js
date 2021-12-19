@@ -3,12 +3,15 @@ import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
 import AtmIcon from "@mui/icons-material/Atm";
 import CardContent from "@mui/material/CardContent";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 
 export default function Cart() {
   const [bookings, setBookings] = useState(null);
   const [products, setProducts] = useState(null);
 
-  useEffect(() => {
+  function getAllBookings() {
     fetch("http://localhost:3000/products")
       .then((response) => response.json())
       .then((data) => {
@@ -21,9 +24,7 @@ export default function Cart() {
         console.log(dict);
       })
       .catch((err) => console.log(err));
-  }, []);
 
-  useEffect(() => {
     if (localStorage.getItem("user")) {
       let userLS = JSON.parse(localStorage.getItem("user"));
 
@@ -35,6 +36,25 @@ export default function Cart() {
         })
         .catch((err) => console.log(err));
     }
+  }
+
+  // useEffect(() => {
+  //   fetch("http://localhost:3000/products")
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       var dict = {};
+
+  //       data.map((prod) => {
+  //         dict[prod._id] = prod;
+  //       });
+  //       setProducts(dict);
+  //       console.log(dict);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
+
+  useEffect(() => {
+    getAllBookings();
   }, []);
 
   function calculateCost(from, to, costPerDay) {
@@ -51,13 +71,20 @@ export default function Cart() {
   }
 
   function cancelBooking(bid) {
-    fetch("http://localhost:3000/booking/bid", {
+    fetch("http://localhost:3000/booking/delete", {
       method: "DELETE",
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify({
+        id: bid,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
         alert("Booking deleted successfully!");
+        getAllBookings();
       })
       .catch((err) => console.log(err));
   }
@@ -77,7 +104,7 @@ export default function Cart() {
               return (
                 <Card
                   style={{
-                    display: "flex",
+                    display: car.deleted === "0" ? "flex" : "none",
                     width: "65%",
                     marginBottom: "10px",
                   }}
@@ -131,21 +158,14 @@ export default function Cart() {
                     <p style={{ margin: "5px", textAlign: "end" }}>
                       total cost
                     </p>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      style={{ fontWeight: "bold" }}
-                    >
-                      Modify
-                    </Button>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      style={{ fontWeight: "bold" }}
-                      onClick={() => cancelBooking(car._id)}
-                    >
-                      Delete
-                    </Button>
+                    <div style={{ marginTop: "100%" }}>
+                      <IconButton>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton onClick={() => cancelBooking(car._id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </div>
                   </div>
                 </Card>
               );

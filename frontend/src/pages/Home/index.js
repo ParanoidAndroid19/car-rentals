@@ -91,6 +91,7 @@ export default function Home() {
           to_date: date[1],
           pickup_location: pickUpLoc,
           dropoff_location: dropOffLoc,
+          deleted: "0",
         }),
       })
         .then((response) => response.json())
@@ -100,7 +101,7 @@ export default function Home() {
         })
         .catch((err) => console.log(err));
     } else {
-      alert("Please login first to make a reserve");
+      alert("Please login first to make a reservation.");
     }
   }
 
@@ -354,8 +355,8 @@ export default function Home() {
             onChange={handleCapacityFilter}
             aria-label="text formatting"
           >
-            <ToggleButton value={5}>2-5 passengers</ToggleButton>
-            <ToggleButton value={6}>6 or more passengers</ToggleButton>
+            <ToggleButton value="25">2-5 passengers</ToggleButton>
+            <ToggleButton value="69">6 or more passengers</ToggleButton>
           </ToggleButtonGroup>
 
           <h4>Total Price</h4>
@@ -373,11 +374,20 @@ export default function Home() {
         </div>
         <div>
           {cars
-            ? cars.map((car) => {
-                return (
+            ? cars.map((car) =>
+                carFilter.length === 0 &&
+                capacityFilter.length === 0 &&
+                priceFilter.length === 0 ? (
                   <Card
                     style={{
-                      display: "flex",
+                      display:
+                        car.deleted !== "0"
+                          ? localStorage.getItem("user")
+                            ? userLS.admin
+                              ? "flex"
+                              : "none"
+                            : "none"
+                          : "flex",
                       width: "fit-content",
                       marginBottom: "10px",
                     }}
@@ -421,14 +431,30 @@ export default function Home() {
                     <div
                       style={{
                         padding: "16px",
-                        textDecoration:
-                          car.deleted !== "0" ? "line-through" : "none",
+                        // textDecoration:
+                        //   car.deleted !== "0" ? "line-through" : "none",
                       }}
                     >
-                      <h3 style={{ margin: "5px", textAlign: "end" }}>
+                      <h3
+                        style={{
+                          margin: "5px",
+                          textAlign: "end",
+                          textDecoration:
+                            car.deleted !== "0" ? "line-through" : "none",
+                        }}
+                      >
                         ${car.cost}
                       </h3>
-                      <p style={{ margin: "5px", textAlign: "end" }}>per day</p>
+                      <p
+                        style={{
+                          margin: "5px",
+                          textAlign: "end",
+                          textDecoration:
+                            car.deleted !== "0" ? "line-through" : "none",
+                        }}
+                      >
+                        per day
+                      </p>
                       {localStorage.getItem("user") ? (
                         userLS.admin ? (
                           <div style={{ display: "flex", marginTop: "100%" }}>
@@ -462,6 +488,7 @@ export default function Home() {
                             variant="contained"
                             style={{ fontWeight: "bold" }}
                             onClick={() => reserveCar(car._id)}
+                            disabled={car.deleted === "0" ? false : true}
                           >
                             Reserve
                           </Button>
@@ -472,14 +499,151 @@ export default function Home() {
                           variant="contained"
                           style={{ fontWeight: "bold" }}
                           onClick={() => reserveCar(car._id)}
+                          disabled={car.deleted === "0" ? false : true}
                         >
                           Reserve
                         </Button>
                       )}
                     </div>
                   </Card>
-                );
-              })
+                ) : carFilter.some((v) =>
+                    car.car_type.toLowerCase().includes(v)
+                  ) ||
+                  capacityFilter.some(
+                    (c) =>
+                      Number(c[0]) <= Number(car.capacity) &&
+                      Number(car.capacity) <= Number(c[1])
+                  ) ? (
+                  <Card
+                    style={{
+                      display:
+                        car.deleted !== "0"
+                          ? localStorage.getItem("user")
+                            ? userLS.admin
+                              ? "flex"
+                              : "none"
+                            : "none"
+                          : "flex",
+                      width: "fit-content",
+                      marginBottom: "10px",
+                    }}
+                    key={car._id}
+                  >
+                    {/* <CardMedia
+              component="img"
+              alt={car.car_model}
+              width="30"
+              image={"/images/" + car.image}
+            /> */}
+                    <img
+                      src={"/images/" + car.image}
+                      alt={car.car_model}
+                      height="200px"
+                      width="auto"
+                    />
+                    <CardContent
+                      style={{
+                        textDecoration:
+                          car.deleted !== "0" ? "line-through" : "none",
+                      }}
+                    >
+                      <div>
+                        <h3 style={{ margin: 0 }}>{car.car_type}</h3>
+                        <p style={{ margin: 0, marginBottom: "10px" }}>
+                          {car.car_model} or similar
+                        </p>
+
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <PersonIcon />
+                          <p style={{ margin: "5px" }}>{car.capacity}</p>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <AtmIcon />
+                          <p style={{ margin: "5px" }}>{car.specification}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+
+                    <div
+                      style={{
+                        padding: "16px",
+                        // textDecoration:
+                        //   car.deleted !== "0" ? "line-through" : "none",
+                      }}
+                    >
+                      <h3
+                        style={{
+                          margin: "5px",
+                          textAlign: "end",
+                          textDecoration:
+                            car.deleted !== "0" ? "line-through" : "none",
+                        }}
+                      >
+                        ${car.cost}
+                      </h3>
+                      <p
+                        style={{
+                          margin: "5px",
+                          textAlign: "end",
+                          textDecoration:
+                            car.deleted !== "0" ? "line-through" : "none",
+                        }}
+                      >
+                        per day
+                      </p>
+                      {localStorage.getItem("user") ? (
+                        userLS.admin ? (
+                          <div style={{ display: "flex", marginTop: "100%" }}>
+                            <IconButton
+                              onClick={() => {
+                                setEditCar(car._id);
+
+                                setCarType(car.car_type);
+                                setCarModel(car.car_model);
+                                setCapacity(car.capacity);
+                                // setRating("");
+                                setCarCost(car.cost);
+                                setCarSpec(car.specification);
+                                setCarImg(car.image);
+                              }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              style={{
+                                display: car.deleted !== "0" ? "none" : "flex",
+                              }}
+                              onClick={() => deleteCar(car._id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </div>
+                        ) : (
+                          <Button
+                            size="small"
+                            variant="contained"
+                            style={{ fontWeight: "bold" }}
+                            onClick={() => reserveCar(car._id)}
+                            disabled={car.deleted === "0" ? false : true}
+                          >
+                            Reserve
+                          </Button>
+                        )
+                      ) : (
+                        <Button
+                          size="small"
+                          variant="contained"
+                          style={{ fontWeight: "bold" }}
+                          onClick={() => reserveCar(car._id)}
+                          disabled={car.deleted === "0" ? false : true}
+                        >
+                          Reserve
+                        </Button>
+                      )}
+                    </div>
+                  </Card>
+                ) : null
+              )
             : null}
         </div>
         {localStorage.getItem("user") ? (

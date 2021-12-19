@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DesktopDatePicker from "@mui/lab/DesktopDatePicker";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 export default function Signup() {
   // const classes = useStyles();
@@ -15,6 +16,10 @@ export default function Signup() {
   const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
   const [dob, setDob] = useState(new Date("1998-08-18T21:11:54"));
+  const [errorFields, setErrorFields] = useState({
+    email: false,
+    pass: false,
+  });
 
   function handleSignup() {
     fetch("http://localhost:3000/signup", {
@@ -34,11 +39,10 @@ export default function Signup() {
       .then((res) => res.json())
       .then((data) => {
         if (data._id) {
-          alert("Account created!")
+          alert("Account created!");
           history.push("/login");
-        }
-        else {
-          alert("Please try again")
+        } else {
+          alert("Please try again");
         }
         console.log(data);
       })
@@ -59,13 +63,34 @@ export default function Signup() {
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <TextField
-          label="Email"
-          variant="outlined"
-          style={{ marginBottom: "20px" }}
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-        />
+        <ClickAwayListener
+          onClickAway={() => {
+            if (email) {
+              let re = /\S+@\S+\.\S+/;
+              if (re.test(email)) {
+                setErrorFields({
+                  ...errorFields,
+                  email: false,
+                });
+              } else {
+                setErrorFields({
+                  ...errorFields,
+                  email: true,
+                });
+              }
+            }
+          }}
+        >
+          <TextField
+            label="Email"
+            variant="outlined"
+            style={{ marginBottom: "20px" }}
+            value={email}
+            error={errorFields.email}
+            helperText={errorFields.email ? "Invalid email" : null}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </ClickAwayListener>
         <TextField
           label="Phone"
           variant="outlined"
@@ -97,7 +122,29 @@ export default function Signup() {
           variant="outlined"
           style={{ marginBottom: "20px", marginTop: "20px" }}
           value={password}
-          onChange={(event) => setPassword(event.target.value)}
+          error={errorFields.pass}
+          helperText={
+            errorFields.pass
+              ? "Password length should be between 6 to 20 characters"
+              : null
+          }
+          onChange={(event) => {
+            if (
+              event.target.value.length < 6 ||
+              event.target.value.length > 20
+            ) {
+              setErrorFields({
+                ...errorFields,
+                pass: true,
+              });
+            } else {
+              setErrorFields({
+                ...errorFields,
+                pass: false,
+              });
+            }
+            setPassword(event.target.value);
+          }}
         />
 
         <Button

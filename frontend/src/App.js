@@ -47,7 +47,7 @@ function App() {
                   fontWeight: "bold",
                 }}
               >
-                Car Rentals
+                Car Rentals - XLR8
               </Link>
             </Typography>
             {localStorage.getItem("user") ? (
